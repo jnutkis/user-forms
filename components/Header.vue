@@ -1,8 +1,8 @@
 <template>
   <div class="center">
-    <h4>
+    <h5>
       <slot></slot>
-    </h4>
+    </h5>
   </div>
 </template>
 

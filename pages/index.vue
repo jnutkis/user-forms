@@ -1,8 +1,10 @@
 <template>
   <section class="container">
     <Header>MyCSF Account Provisioning</Header>
+    <form autocomplete="_away">
+    <input type="hidden" name="auto" autocomplete="_away">
     <div class="box teal lighten-5">
-    <form>
+
       <!--First Row -->
       <div class="row">
         <div class="col m6 s12 input-field">
@@ -16,11 +18,6 @@
           </select>
           <label for="formType">Form Type</label>
         </div>
-      </div>
-
-
-      <!--Second Row-->
-      <div class="row space-above">
         <div class="col m6 s12 input-field">
           <label for="orgname">Organization Name</label>
           <input type="text" name="orgname" id="orgname" placeholder="" v-model="orgname"/>
@@ -30,9 +27,11 @@
           <input type="text" name="accountnum" id="accountnum" placeholder="" v-model="accountnum"/>
         </div>
       </div>
+    </div>
 
 
       <!--Second Row-->
+      <div class="box red lighten-5">
       <div class="row">
         <div class="col m6 s12 input-field subscriptionType">
           <select name="subscriptionType" id="subscriptionType" v-model="subscription" v-on:change="prefillSubscription">
@@ -70,13 +69,13 @@
         <h6>Add-Ons</h6>
         <p>
         <label>
-          <input type="checkbox" class="filled-in" v-model="reporting" />
+          <input type="checkbox" class="" v-model="reporting" />
           <span>Reporting</span>
         </label>
         </p>
         <p>
         <label>
-          <input type="checkbox" class="filled-in" v-model="cap"/>
+          <input type="checkbox" class="" v-model="cap"/>
           <span>CAP Management</span>
         </label>
         </p>
@@ -85,11 +84,11 @@
 
       <!-- Assessor Row-->
       <div class="row">
-        <div class="col m6 s12 input-field">
+        <div class="col m6 s12 input-field" id="assessorscheck">
           <h6>Assessor</h6>
           <p>
           <label>
-            <input type="checkbox" class="filled-in" v-model="assessor" />
+            <input type="checkbox" class="" v-model="assessor" />
             <span>Include Assessor?</span>
           </label>
         </p>
@@ -106,22 +105,59 @@
         <input type="text" name="assessorname" id="assessorname" v-model="assessorname" placeholder="">
       </div>
     </div>
+     </div>
+
+    <!-- User Row -->
+    <div class="box green lighten-5 user-box">
+    <div class="row users">
+      <h6 id="pad">Admins</h6>
+      <div class="col s12 m6 input-field" v-on:keyup.enter="addAdmins">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" placeholder="" v-model="adminname" autocomplete="_away">
+      </div>
+      <div class="col s12 m6 input-field" v-on:keyup.enter="addAdmins">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" placeholder="" v-model="adminemail" autocomplete="_away">
+      </div>
+    </div>
+
+    <!-- User Table -->
+    <div class="row green lighten-5" v-show="admins.length > 0">
+      <div><span class="bold">Remedy Case(s): </span><span id="remedy">{{remedy}}</span></div>
+      <div><span class="bold">Account Number: </span>{{accountnum}}</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(admin,index) in admins" :key="index">
+            <td>{{ admin.name }}</td>
+            <td>{{ admin.email }}</td>
+            <td v-on:click="removeAdmin"><i :id="index" class="material-icons cancel">cancel</i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
 
     </form>
 
-    <div class="row">
+    <div class="row signatureSection">
       <div class="col s12 m6 left">
-        Name: {{name}}
+        Name: <span class="bold">{{ name }}</span>
       </div>
       <div class="col s12 m6 left">
-        Date: {{ date }}
+        Date: <span class="bold">{{ date }}</span>
       </div>
       <div class="col s12 m6 left signature">
-        Signature:
+        Signature: <input disabled type="text" name="signature" id="signature">
       </div>
     </div>
     <button class="btn red waves-effect" @click="resetForm">Reset</button>
-  </div>
   </section>
 </template>
 
@@ -147,6 +183,9 @@ export default {
       assessor: false,
       assessmentname: null,
       assessorname: null,
+      adminname: null,
+      adminemail: null,
+      admins: [],
       formType: [
         {
           name: 'Account Form',
@@ -225,6 +264,9 @@ export default {
       this.assessor = false;
       this.assessmentname = null;
       this.assessorname = null;
+      this.adminname = null;
+      this.adminemail = null;
+      this.admins = [];
     },
     prefillSubscription() {
       if (this.subscription === 1) {
@@ -260,6 +302,19 @@ export default {
       } else {
         this.assessor = false;
       }
+    },
+    addAdmins() {
+      if (this.adminname && this.adminemail) {
+        this.admins.push({
+          name: this.adminname,
+          email: this.adminemail
+        });
+        this.adminname = null;
+        this.adminemail = null;
+      }
+    },
+    removeAdmin(event) {
+      this.admins.splice(parseInt(event.srcElement.id), 1);
     }
   },
   beforeMount() {
@@ -267,6 +322,11 @@ export default {
       var elems = document.querySelectorAll('select');
       var instances = M.FormSelect.init(elems, {});
     });
+  },
+  head() {
+    return {
+      title: 'MyCSF Provisioning'
+    };
   }
 };
 </script>
@@ -281,18 +341,53 @@ export default {
 }
 
 .box {
-  border: 1px solid black;
+  border: 1px dotted black;
   padding: 10px;
+  margin: 30px 0;
 }
 
 .signature {
   margin: 25px 0 0 0;
 }
 
+.bold {
+  font-weight: bold;
+}
+
+#pad {
+  padding-left: 0.75em;
+}
+
+.signatureSection {
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
+
+.cancel {
+  cursor: pointer;
+}
+
 @media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
   button,
-  .caret {
+  .caret,
+  .users,
+  td:nth-child(3),
+  th:nth-child(3),
+  #assessorscheck {
     display: none;
+  }
+
+  .box {
+    border: none;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .user-box {
+    background-color: white !important;
   }
 }
 </style>
