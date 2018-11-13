@@ -161,7 +161,16 @@
         Signature: <input disabled type="text" name="signature" id="signature">
       </div>
     </div>
-    <button class="btn red waves-effect" @click="resetForm">Reset</button>
+     <div class="row">
+       <div class="col m6 s12">
+         <button class="btn waves-effect waves-light" type="submit" name="print" v-on:click="printPage">Print
+          <i class="material-icons right">print</i>
+        </button>
+        <button class="btn red waves-effect right" @click="resetForm">Reset
+          <i class="material-icons right">replay</i>
+        </button>
+       </div>
+     </div>
   </section>
 </template>
 
@@ -251,28 +260,30 @@ export default {
   },
   methods: {
     resetForm() {
-      this.remedy = null;
-      this.type = '';
-      document.querySelector('.formType .select-dropdown ').value =
-        'Select a Form Type';
-      this.subscription = '';
-      document.querySelector('.subscriptionType .select-dropdown ').value =
-        'Select a Subscription Type';
-      this.users = null;
-      this.objects = null;
-      this.credits = null;
-      this.reporting = false;
-      this.cap = false;
-      this.orgname = null;
-      this.accountnum = null;
-      this.assessor = false;
-      this.assessmentname = null;
-      this.assessorname = null;
-      this.adminname = null;
-      this.adminemail = null;
-      this.expiration = null;
-      this.admins = [];
-      document.querySelector('#expiration').value = '';
+      if (confirm('Are you sure you wish to reset the form?')) {
+        this.remedy = null;
+        this.type = '';
+        document.querySelector('.formType .select-dropdown ').value =
+          'Select a Form Type';
+        this.subscription = '';
+        document.querySelector('.subscriptionType .select-dropdown ').value =
+          'Select a Subscription Type';
+        this.users = null;
+        this.objects = null;
+        this.credits = null;
+        this.reporting = false;
+        this.cap = false;
+        this.orgname = null;
+        this.accountnum = null;
+        this.assessor = false;
+        this.assessmentname = null;
+        this.assessorname = null;
+        this.adminname = null;
+        this.adminemail = null;
+        this.expiration = null;
+        this.admins = [];
+        document.querySelector('#expiration').value = '';
+      }
     },
     prefillSubscription() {
       if (this.subscription === 1) {
@@ -358,6 +369,9 @@ export default {
         month +
         '-' +
         today.getDate().toString();
+    },
+    printPage() {
+      window.print();
     }
   },
   beforeMount() {
