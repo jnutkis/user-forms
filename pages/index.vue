@@ -62,7 +62,7 @@
         </div>
         <div class="col m6 s12 input-field">
           <label for="expiration">Expiration Date</label>
-          <input type="date" name="expiration" id="expiration" placeholder="">
+          <input type="date" name="expiration" id="expiration" placeholder="" :class="{hideexpiration: !expiration}" v-model="expiration">
         </div>
       </div>
 
@@ -198,6 +198,7 @@ export default {
       assessorname: null,
       adminname: null,
       adminemail: null,
+      expiration: '',
       admins: [],
       formType: [
         {
@@ -452,6 +453,10 @@ export default {
 
   .user-box {
     background-color: white !important;
+  }
+
+  .hideexpiration {
+    display: none;
   }
 }
 </style>
