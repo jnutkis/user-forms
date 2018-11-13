@@ -13,7 +13,7 @@
         </div>
         <div class="col m6 s12 input-field formType">
           <select name="formType" id="formType" v-model="type" v-on:change="prefillAssessor">
-            <option disabled value="">Select a Form Type</option>
+            <option value="">Select a Form Type</option>
             <option v-for="(type, index) in formType" :value="type.value" :key="index">{{ type.name }}</option>
           </select>
           <label for="formType">Form Type</label>
@@ -35,7 +35,7 @@
       <div class="row">
         <div class="col m6 s12 input-field subscriptionType">
           <select name="subscriptionType" id="subscriptionType" v-model="subscription" v-on:change="prefillSubscription">
-            <option disabled value="" >Select a Subscription Type</option>
+            <option value="" >Select a Subscription Type</option>
             <option v-for="(type,index) in subscriptionTypes" :key="index" :value="type.value">{{ type.name }}</option>
           </select>
           <label for="subscriptionType">Subscription Type</label>
@@ -59,6 +59,10 @@
         <div class="col m6 s12 input-field">
           <label for="credits"># of Report Credits</label>
           <input type="number" name="credits" id="credits" v-model="credits" placeholder="">
+        </div>
+        <div class="col m6 s12 input-field">
+          <label for="expiration">Expiration Date</label>
+          <input type="date" name="expiration" id="expiration" placeholder="">
         </div>
       </div>
 
@@ -171,8 +175,8 @@ export default {
   data() {
     return {
       remedy: null,
-      type: undefined,
-      subscription: undefined,
+      type: '',
+      subscription: '',
       users: null,
       objects: null,
       credits: null,
@@ -248,10 +252,10 @@ export default {
   methods: {
     resetForm() {
       this.remedy = null;
-      this.type = undefined;
+      this.type = '';
       document.querySelector('.formType .select-dropdown ').value =
         'Select a Form Type';
-      this.subscription = undefined;
+      this.subscription = '';
       document.querySelector('.subscriptionType .select-dropdown ').value =
         'Select a Subscription Type';
       this.users = null;
@@ -266,7 +270,9 @@ export default {
       this.assessorname = null;
       this.adminname = null;
       this.adminemail = null;
+      this.expiration = null;
       this.admins = [];
+      document.querySelector('#expiration').value = '';
     },
     prefillSubscription() {
       if (this.subscription === 1) {
@@ -274,26 +280,31 @@ export default {
         this.objects = 1;
         this.reporting = false;
         this.cap = false;
+        this.setReportDate();
       } else if (this.subscription === 2) {
         this.users = 5;
         this.objects = 2;
         this.reporting = true;
         this.cap = false;
+        this.setSubscriptionDate();
       } else if (this.subscription === 3) {
         this.users = 10;
         this.objects = 5;
         this.reporting = true;
         this.cap = true;
+        this.setSubscriptionDate();
       } else if (this.subscription === 4) {
         this.users = 25;
         this.objects = 10;
         this.reporting = true;
         this.cap = true;
+        this.setSubscriptionDate();
       } else if (this.subscription === 5) {
         this.users = 60;
         this.objects = null;
         this.reporting = false;
         this.cap = false;
+        document.querySelector('#expiration').value = '';
       }
     },
     prefillAssessor() {
@@ -315,12 +326,51 @@ export default {
     },
     removeAdmin(event) {
       this.admins.splice(parseInt(event.srcElement.id), 1);
+    },
+    setReportDate() {
+      let today = new Date();
+      today.setDate(today.getDate() + 91);
+      let month =
+        (today.getMonth() + 1).toString().length === 1
+          ? '0' + (today.getMonth() + 1).toString()
+          : (today.getMonth() + 1).toString();
+      document.querySelector('#expiration').value =
+        today.getFullYear().toString() +
+        '-' +
+        month +
+        '-' +
+        today.getDate().toString();
+    },
+    setSubscriptionDate() {
+      let today = new Date();
+      if (today.getFullYear % 4 === 0) {
+        today.setDate(today.getDate() + 367);
+      } else {
+        today.setDate(today.getDate() + 366);
+      }
+      let month =
+        (today.getMonth() + 1).toString().length === 1
+          ? '0' + (today.getMonth() + 1).toString()
+          : (today.getMonth() + 1).toString();
+      document.querySelector('#expiration').value =
+        today.getFullYear().toString() +
+        '-' +
+        month +
+        '-' +
+        today.getDate().toString();
     }
   },
   beforeMount() {
     document.addEventListener('DOMContentLoaded', function() {
       var elems = document.querySelectorAll('select');
       var instances = M.FormSelect.init(elems, {});
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.datepicker');
+      var instances = M.Datepicker.init(elems, {
+        format: 'mm/dd/yyyy'
+      });
     });
   },
   head() {
