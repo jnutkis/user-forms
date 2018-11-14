@@ -62,7 +62,7 @@
         </div>
         <div class="col m6 s12 input-field">
           <label for="expiration">Expiration Date</label>
-          <input type="date" name="expiration" id="expiration" placeholder="" :class="{hideexpiration: !expiration}" v-model="expiration">
+          <input type="date" name="expiration" id="expiration" placeholder="">
         </div>
       </div>
 
@@ -198,7 +198,6 @@ export default {
       assessorname: null,
       adminname: null,
       adminemail: null,
-      expiration: '',
       admins: [],
       formType: [
         {
@@ -281,7 +280,6 @@ export default {
         this.assessorname = null;
         this.adminname = null;
         this.adminemail = null;
-        this.expiration = null;
         this.admins = [];
         document.querySelector('#expiration').value = '';
       }
